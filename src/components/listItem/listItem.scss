@@ -12,16 +12,7 @@
         height: 100%;
         object-fit: cover;
       }
-    
-    video {
-        width: 100%;
-        height: 140px;
-        object-fit: cover;
-        position: absolute;
-        top: 0;
-        left: 0;
-      }
-
+      
     &:hover {
         width: 325px;
         height: 300px;
@@ -34,11 +25,19 @@
         img {
             height: 140px;
         }
+        .video {
+            width: 100%;
+            height: 140px;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+            border: none;
+          }
 
         .itemInfo {
            display: flex;
            flex-direction: column;
-           padding: 5px;
            margin-left: 5px;
 
            .icons {

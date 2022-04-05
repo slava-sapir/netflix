@@ -1,51 +1,82 @@
-import React from 'react';
-import './featured.scss';
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import axios from 'axios';
 import { InfoOutlined } from '@material-ui/icons';
 import { PlayArrow } from '@material-ui/icons';
+import movieTrailer from 'movie-trailer';
+import './featured.scss';
 
-export default function Featured( {type}) {
+export default function Featured ( { type, setGenre } ) {
+
+  const api_key = process.env.REACT_APP_API_KEY;
+  const movie_link = `https://api.themoviedb.org/3/trending/all/week?api_key=${api_key}&language=en-US`;
+  const image_path = `https://image.tmdb.org/t/p/original`;
+
+  const [movie, setMovie] = useState({ original_title: "Nightmare Alley"});
+  const [youtubeId, setYouTubeId] = useState('');
+
+  useEffect( () => {
+  const getMovie = async () => {
+      try {
+        const { data } = await axios.get(movie_link);
+        setMovie(data.results[Math.floor(Math.random() * 10)]);
+        } catch(err) {
+           console.log(err)
+        }
+      }
+     getMovie();
+  },[type]);
+
+  const trailerPath = async () => {
+    try {
+        const url = await movieTrailer((
+            movie?.original_title || movie?.original_name || movie?.name || movie?.title));
+        const urlParam = url.split('=');
+        setYouTubeId(urlParam[1]);
+    } catch( err ) {
+        console.log(err)
+    } 
+ }
+  trailerPath();
+
   return (
     <div className='featured'>
         {type && (
             <div className='category'>
                 <span>{ type === "movie" ? "Movies" : "Series"}</span>
-                <select name='genre' id='genre'>
-                    <option>Genre</option>
-                    <option value="adventure">Adventure</option>
-                    <option value="comedy">Comedy</option>
-                    <option value="crime">Crime</option>
-                    <option value="fantasy">Fantasy</option>
-                    <option value="historical">Historical</option>
-                    <option value="horror">Horror</option>
-                    <option value="romance">Romance</option>
-                    <option value="sci-fi">Sci-fi</option>
-                    <option value="thriller">Thriller</option>
-                    <option value="western">Western</option>
-                    <option value="animation">Animation</option>
-                    <option value="drama">Drama</option>
-                    <option value="documentary">Documentary</option>
+                <select 
+                 name='genre' id='genre'
+                 onChange={(e) => setGenre(e.target.value) }
+                >
+                    <option value="none">Genre</option>
+                    <option value="35">Comedy</option>
+                    <option value="80">Crime</option>
+                    <option value="9648">Fantasy</option>
+                    <option value="10749">Romance</option>
+                    <option value="10751">Kids and Family</option>
+                    <option value="37">Western</option>
+                    <option value="16">Animation</option>
+                    <option value="18">Drama</option>
+                    <option value="99">Documentary</option>
                 </select>
             </div>
         )}
-     <img src="https://images.pexels.com/photos/6899260/pexels-photo-6899260.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500"
-        alt=""
-    />
+    
+    <img src={ image_path + `${ movie?.backdrop_path || movie.poster_path }` } alt="" />
     <div className='info'>
-    <img
-    src="https://occ-0-1432-1433.1.nflxso.net/dnm/api/v6/LmEnxtiAuzezXBjYXPuDgfZ4zZQ/AAAABUZdeG1DrMstq-YKHZ-dA-cx2uQN_YbCYx7RABDk0y7F8ZK6nzgCz4bp5qJVgMizPbVpIvXrd4xMBQAuNe0xmuW2WjoeGMDn1cFO.webp?r=df1"
-    alt=""
-    />
+    <span className='movieTitle'>
+        { movie?.original_title || movie?.original_name || movie?.name || movie?.title }
+    </span>
     <span className='desc'>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae
-          adipisci repellendus eum quasi illo, velit numquam, maxime tempora
-          sint deleniti, aliquid qui? Facilis, adipisci! Ratione hic repudiandae
-          temporibus eum earum?
+        { movie?.overview }
     </span>
     <div className='buttons'>
+    <Link className='link' to={{pathname:'/watch', youtubeId:youtubeId}}>
         <button className='play'>
             <PlayArrow />
             <span>Play</span>
         </button>
+    </Link>
         <button className='more'>
             <InfoOutlined />
             <span>Info</span>

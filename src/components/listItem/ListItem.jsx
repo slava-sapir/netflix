@@ -1,32 +1,45 @@
 import React, {useState} from 'react';
-import { PlayArrow, Add, ThumbUpAltOutlined, ThumbDownAltOutlined }  from '@material-ui/icons'
+import { Link } from 'react-router-dom';
+import { PlayArrow, Add, ThumbUpAltOutlined, ThumbDownAltOutlined }  from '@material-ui/icons';
+import movieTrailer from 'movie-trailer';
 import './listItem.scss';
 
-export default function ListItem( { index } ) {
+export default function ListItem( { movie, index } ) {
+
   const [isHovered, setIsHovered] = useState(false);
-     const trailer ="https://player.vimeo.com/external/371433846.sd.mp4?s=236da2f3c0fd273d2c6d9a064f3ae35579b2bbdf&profile_id=139&oauth2_token_id=57447761";
-    //const trailer ="https://www.youtube.com/watch?v=aIqVLyNQa5Y"
+  const [youtubeId, setYouTubeId] = useState('');
+
+  const videoSourse =`https://www.youtube-nocookie.com/embed/${youtubeId}?autoplay=1&mute=1&modestbranding=1&controls=0>`;
+  const image_path = `https://image.tmdb.org/t/p/original`;
   
+    const trailerPath = () => {
+      movieTrailer(movie?.original_title || movie?.original_name || movie?.name || movie?.title)
+      .then((url) => {
+        if(url) {
+          const urlParam = url.split('=');
+          setYouTubeId(urlParam[1]);
+        }
+      })
+        .catch((err) => console.log(err))  
+    }
+    trailerPath();
+
     return (
+  <Link className='link' to={{pathname:'/watch', youtubeId:youtubeId}}>
     <div className='listItem' 
       style={{left: isHovered && index*225 - 50 + index*2.5}}
       onMouseEnter={() => setIsHovered(true)} 
       onMouseLeave={() => setIsHovered(false)} 
       >
-        <img
-       // src="https://image.tmdb.org/t/p/original/kVr5zIAFSPRQ57Y1zE7KzmhzdMQ.jpg"
-        src="https://occ-0-1723-92.1.nflxso.net/dnm/api/v6/X194eJsgWBDE2aQbaNdmCXGUP-Y/AAAABU7D36jL6KiLG1xI8Xg_cZK-hYQj1L8yRxbQuB0rcLCnAk8AhEK5EM83QI71bRHUm0qOYxonD88gaThgDaPu7NuUfRg.jpg?r=4ee"
-        alt=""
-        />
-
+      <img
+      src={ movie.backdrop_path === null ? 'https://via.placeholder.com/225X140?text=image+lost'
+           : image_path + `${ movie?.backdrop_path || movie.poster_path }`
+          }
+      alt=""
+      />
       {isHovered && (
       <>
-      <video className='video' 
-      src={trailer} 
-      autoPlay={true}
-      progress="true"
-      controls
-      />
+      <iframe className='video' title="video frame" src={videoSourse}></iframe>
       <div className='itemInfo'>
         <div className='icons'>
           <PlayArrow className='icon'/>
@@ -34,20 +47,19 @@ export default function ListItem( { index } ) {
           <ThumbUpAltOutlined className='icon'/>
           <ThumbDownAltOutlined className='icon'/>
         </div>
-        <div className='itemInfoTop'>
-          <span>1 hour 15 min</span>
-          <span className='limit'>16+</span>
-          <span>1999</span>
-        </div>
-        <div className='desc'>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae
-          adipisci repellendus eum quasi illo
-        </div>
-        <div className='genre'>Action</div>
+            <div className='itemInfoTop'>
+              <span>{movie.original_title || movie.original_name || movie.name}</span>
+              <span className='limit'>{movie.adult ? '16+' : 'Any age' }</span>
+              <span>{movie.release_date || movie.first_air_date}</span>
+            </div>
+          <div className='desc'>
+            { movie.overview }
+          </div>
+        <div className='genre'>Type: {movie.media_type}</div>
       </div>
-      
       </>
       )}
     </div>
-  );
+  </Link>
+ );
 }
