@@ -4,7 +4,7 @@ import { ArrowBackIosOutlined } from '@material-ui/icons';
 import { ArrowForwardIosOutlined } from '@material-ui/icons';
 import ListItem from '../listItem/ListItem';
 
-export default function List( { list }) {
+export default function List( { type, list }) {
     const listRef = useRef();
     const [ slideNumber, setSlideNumber] = useState(0);
     const [ isMoved, setIsMoved ] = useState(false);
@@ -34,7 +34,7 @@ export default function List( { list }) {
           <div className="container" ref={listRef}>
            {list.results?.map((movie, i) => (
               <ListItem movie={movie} index={i} key={movie.id} />
-           ))}
+             ))}
           </div>
           <ArrowForwardIosOutlined 
           className='sliderArrow right' 

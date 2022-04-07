@@ -26,7 +26,7 @@ export default function ListItem( { movie, index } ) {
 
     return (
   <Link className='link' to={{pathname:'/watch', youtubeId:youtubeId}}>
-    <div className='listItem' 
+    <div className='listItem'
       style={{left: isHovered && index*225 - 50 + index*2.5}}
       onMouseEnter={() => setIsHovered(true)} 
       onMouseLeave={() => setIsHovered(false)} 
@@ -55,7 +55,7 @@ export default function ListItem( { movie, index } ) {
           <div className='desc'>
             { movie.overview }
           </div>
-        <div className='genre'>Type: {movie.media_type}</div>
+        <div className='genre'>{movie.media_type ? `Type : ${movie.media_type}` : '' }</div>
       </div>
       </>
       )}

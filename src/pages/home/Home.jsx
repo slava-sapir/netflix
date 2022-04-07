@@ -31,7 +31,7 @@ const Home = ( { type } ) => {
       }
     };
     getLists();
-  }, [type, genre, link]);
+  }, [type, genre]);
 
 
   return (
