@@ -1,5 +1,0 @@
-
-
-Backend: Lecture-16: https://github.com/senolatac/spring-boot-product-seller
-
-Client-Side: Lecture-53: https://github.com/senolatac/react-product-seller
